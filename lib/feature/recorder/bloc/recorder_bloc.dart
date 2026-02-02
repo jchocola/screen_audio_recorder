@@ -3,7 +3,9 @@
 import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
+import 'package:fft_recorder_ui/fft_recorder_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
 ///
 /// EVENT
@@ -18,6 +20,10 @@ class RecorderBlocEvent_pickRecordAudio extends RecorderBlocEvent {}
 class RecorderBlocEvent_pickRecordScreen extends RecorderBlocEvent {}
 
 class RecorderBlocEvent_toogleRecordVideoWithAudio extends RecorderBlocEvent {}
+
+class RecorderBlocEvent_startRecordingTapped extends RecorderBlocEvent {}
+
+class RecorderBlocEvent_stopRecordingTapped extends RecorderBlocEvent {}
 
 ///
 /// STATE
@@ -59,6 +65,7 @@ class RecorderBlocState_recordingScreen extends RecorderBlocState {}
 /// BLOC
 ///
 class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
+  final FftRecorderController fftRecorderController = FftRecorderController();
   RecorderBloc()
     : super(
         RecorderBlocState_preparing(
@@ -104,6 +111,66 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
           final currentValue = currentState.recordVideoWithAudio;
 
           emit(currentState.copyWith(recordVideoWithAudio: !currentValue));
+        } catch (e) {
+          log(e.toString());
+        }
+      }
+    });
+
+    ///
+    /// START RECORDING TAPPED
+    ///
+    on<RecorderBlocEvent_startRecordingTapped>((event, emit) async {
+      final currentState = state;
+      if (currentState is RecorderBlocState_preparing) {
+        try {
+          if (currentState.isRecordScreen) {
+            ///
+            /// RECORD SCREEN
+            ///
+          } else {
+            ///
+            /// RECORD AUDIO
+            ///
+            //1) REQUEST MICROPHONE
+            final status = await fftRecorderController.requestMicPermission();
+            if (status == true) {
+              final dir = await getDownloadsDirectory();
+              final filename = DateTime.now().toIso8601String() + '.wav';
+              final fileDir = dir!.path + '/${filename}';
+              // Start recording (auto-starts streaming)
+              await fftRecorderController.startRecording(filePath: fileDir);
+
+              emit(RecorderBlocState_recordingAudio());
+            } else {
+              log('Microphone denied');
+            }
+          }
+        } catch (e) {
+          log(e.toString());
+        }
+      }
+    });
+
+    ///
+    /// ON STOP RECORDING TAPPED
+    ///
+    on<RecorderBlocEvent_stopRecordingTapped>((event, emit) async {
+      final currentState = state;
+
+      ///
+      /// RECORD AUDIO LOGIC
+      ///
+      if (currentState is RecorderBlocState_recordingAudio) {
+        try {
+          await fftRecorderController.stopRecording();
+
+          emit(
+            RecorderBlocState_preparing(
+              isRecordScreen: false,
+              recordVideoWithAudio: true,
+            ),
+          );
         } catch (e) {
           log(e.toString());
         }
