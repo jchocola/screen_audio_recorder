@@ -1,5 +1,6 @@
 // ignore_for_file: camel_case_types
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
@@ -24,6 +25,8 @@ class RecorderBlocEvent_toogleRecordVideoWithAudio extends RecorderBlocEvent {}
 class RecorderBlocEvent_startRecordingTapped extends RecorderBlocEvent {}
 
 class RecorderBlocEvent_stopRecordingTapped extends RecorderBlocEvent {}
+
+class RecorderBlocEvent_tick extends RecorderBlocEvent {}
 
 ///
 /// STATE
@@ -57,7 +60,13 @@ class RecorderBlocState_preparing extends RecorderBlocState {
 
 class RecorderBlocState_loading extends RecorderBlocState {}
 
-class RecorderBlocState_recordingAudio extends RecorderBlocState {}
+class RecorderBlocState_recordingAudio extends RecorderBlocState {
+  final Duration elapsed;
+  RecorderBlocState_recordingAudio({required this.elapsed});
+
+  @override
+  List<Object?> get props => [elapsed];
+}
 
 class RecorderBlocState_recordingScreen extends RecorderBlocState {}
 
@@ -66,6 +75,9 @@ class RecorderBlocState_recordingScreen extends RecorderBlocState {}
 ///
 class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
   final FftRecorderController fftRecorderController = FftRecorderController();
+  // private timer and elapsed tracker
+  Timer? _timer;
+  Duration _elapsed = Duration.zero;
   RecorderBloc()
     : super(
         RecorderBlocState_preparing(
@@ -117,6 +129,11 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
       }
     });
 
+    on<RecorderBlocEvent_tick>((event, emit) {
+      _elapsed = _elapsed + const Duration(seconds: 1);
+      emit(RecorderBlocState_recordingAudio(elapsed: _elapsed));
+    });
+
     ///
     /// START RECORDING TAPPED
     ///
@@ -141,7 +158,13 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
               // Start recording (auto-starts streaming)
               await fftRecorderController.startRecording(filePath: fileDir);
 
-              emit(RecorderBlocState_recordingAudio());
+              // reset and start timer
+              _elapsed = Duration.zero;
+              emit(RecorderBlocState_recordingAudio(elapsed: _elapsed));
+              _timer?.cancel();
+              _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+                add(RecorderBlocEvent_tick());
+              });
             } else {
               log('Microphone denied');
             }
@@ -163,7 +186,13 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
       ///
       if (currentState is RecorderBlocState_recordingAudio) {
         try {
+          // stop timer first
+          _timer?.cancel();
+          _timer = null;
+
           await fftRecorderController.stopRecording();
+
+          _elapsed = Duration.zero;
 
           emit(
             RecorderBlocState_preparing(
@@ -176,5 +205,11 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
         }
       }
     });
+
+    @override
+    Future<void> close() {
+      _timer?.cancel();
+      return super.close();
+    }
   }
 }
