@@ -37,6 +37,7 @@ dependencies:
   logger: ^2.6.2
   flutter_bloc: ^9.1.1
   equatable: ^2.0.8
+  fft_recorder_ui: ^1.0.2
 
 dev_dependencies:
   flutter_test:
