@@ -6,6 +6,7 @@ class CustomSwitch extends StatelessWidget {
   final void Function(bool)? onChanged;
   @override
   Widget build(BuildContext context) {
-    return Switch(value: value, onChanged: onChanged);
+    final theme = Theme.of(context);
+    return Switch(value: value, onChanged: onChanged, inactiveThumbColor: theme.colorScheme.primaryContainer ,inactiveTrackColor: theme.colorScheme.secondary,trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),);
   }
 }

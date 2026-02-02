@@ -13,7 +13,7 @@ class AppMenu extends StatelessWidget {
       spacing: AppConstant.appPadding,
       children: [
         AppLogo(),
-        Text('Simple Recorder', style: theme.textTheme.titleLarge),
+        Text('Simple Recorder', style: theme.textTheme.titleMedium),
         Spacer(),
 
         PopupMenuButton(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/core/theme/app_theme.dart';
 import 'package:recorder_app/feature/menu/presentation/menu_page.dart';
+import 'package:recorder_app/feature/recorder/bloc/recorder_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +14,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Flutter Demo',theme: appTheme, home: HomePage(), debugShowCheckedModeBanner: false,);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context)=> RecorderBloc())
+      ],
+      child: MaterialApp(title: 'Flutter Demo',theme: appTheme, home: HomePage(), debugShowCheckedModeBanner: false,));
   }
 }
 
