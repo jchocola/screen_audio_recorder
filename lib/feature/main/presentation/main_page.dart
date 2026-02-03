@@ -4,7 +4,7 @@ import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/core/icon/app_icon.dart';
 import 'package:recorder_app/core/snack_bar/show_error_snackbar.dart';
 import 'package:recorder_app/core/snack_bar/show_success_snackbar.dart';
-import 'package:recorder_app/feature/menu/widget/app_menu.dart';
+import 'package:recorder_app/feature/main/widget/app_menu.dart';
 import 'package:recorder_app/feature/recorder/bloc/recorder_bloc.dart';
 import 'package:recorder_app/feature/recorder/presentation/recording_bar.dart';
 import 'package:recorder_app/main.dart';
@@ -12,8 +12,8 @@ import 'package:recorder_app/shared/big_button.dart';
 import 'package:recorder_app/shared/mode_card.dart';
 import 'package:recorder_app/shared/parameter_listile.dart';
 
-class MenuPage extends StatelessWidget {
-  const MenuPage({super.key});
+class MainPage extends StatelessWidget {
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,8 @@ class MenuPage extends StatelessWidget {
                     ),
                   ],
                 );
-              } else if (state is RecorderBlocState_recordingAudio || state is RecorderBlocState_recordingScreen) {
+              } else if (state is RecorderBlocState_recordingAudio ||
+                  state is RecorderBlocState_recordingScreen) {
                 return RecordingBar();
               } else {
                 return CircularProgressIndicator();

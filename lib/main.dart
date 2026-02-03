@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/core/theme/app_theme.dart';
-import 'package:recorder_app/feature/menu/presentation/menu_page.dart';
+import 'package:recorder_app/feature/main/presentation/main_page.dart';
 import 'package:recorder_app/feature/recorder/bloc/recorder_bloc.dart';
 
 final logger = Logger();
@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(AppConstant.appPadding),
-        child: Column(mainAxisAlignment: .center, children: [MenuPage()]),
+        child: Column(mainAxisAlignment: .center, children: [MainPage()]),
       ),
     );
   }

@@ -9,5 +9,5 @@ class AppIcon {
 
   static IconData languageIcon = Icons.language_rounded;
   static IconData infoIcon = Icons.info_outline_rounded;
-  static IconData legalInfoIcon = Icons.copyright;
+  static IconData legalInfoIcon = Icons.file_present_outlined;
 }
