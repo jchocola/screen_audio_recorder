@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:recorder_app/core/app_text/app_text.dart';
 import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/core/icon/app_icon.dart';
 import 'package:recorder_app/core/snack_bar/show_error_snackbar.dart';
@@ -50,7 +52,7 @@ class MainPage extends StatelessWidget {
                       mainAxisAlignment: .spaceAround,
                       children: [
                         ModeCard(
-                          modeName: 'Record Screen',
+                          modeName: context.tr(AppText.record_screen),
                           icon: AppIcon.recordIcon,
                           isSelected: state.isRecordScreen,
                           onTap: () => context.read<RecorderBloc>().add(
@@ -58,7 +60,7 @@ class MainPage extends StatelessWidget {
                           ),
                         ),
                         ModeCard(
-                          modeName: 'Record Audio',
+                          modeName: context.tr(AppText.record_audio),
                           icon: AppIcon.audioIcon,
                           isSelected: !state.isRecordScreen,
                           onTap: () => context.read<RecorderBloc>().add(
@@ -73,7 +75,7 @@ class MainPage extends StatelessWidget {
                         : _audioRecorderParams(context),
 
                     BigButton(
-                      title: 'Start Recording',
+                      title: context.tr(AppText.start_recording),
                       onTap: () => context.read<RecorderBloc>().add(
                         RecorderBlocEvent_startRecordingTapped(),
                       ),
@@ -100,7 +102,7 @@ class MainPage extends StatelessWidget {
     return Column(
       children: [
         ParameterListile(
-          title: 'Audio',
+          title: recorderBloc_l is RecorderBlocState_preparing ?  recorderBloc_l.recordVideoWithAudio ? context.tr(AppText.with_audio) : context.tr(AppText.without_audio): '',
           switchValue: recorderBloc_l is RecorderBlocState_preparing
               ? recorderBloc_l.recordVideoWithAudio
               : false,
@@ -119,8 +121,8 @@ class MainPage extends StatelessWidget {
         ParameterListile(
           title: recorderBloc_l is RecorderBlocState_preparing
               ? recorderBloc_l.recordChannelIsMono
-                    ? 'Audio Channel - Mono'
-                    : 'Audio Channel - Stereo'
+                    ? context.tr(AppText.mono)
+                    : context.tr(AppText.stereo)
               : '',
           switchValue: recorderBloc_l is RecorderBlocState_preparing
               ? recorderBloc_l.recordChannelIsMono

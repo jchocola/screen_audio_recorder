@@ -9,6 +9,7 @@ final appTheme = ThemeData(
     primaryContainer: AppColor.white,
 
     secondary: AppColor.gray,
+    secondaryFixed: AppColor.black,
 
 
     error: AppColor.red,

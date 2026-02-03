@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:recorder_app/core/app_text/app_text.dart';
 import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/shared/app_logo.dart';
 import 'package:recorder_app/shared/info_listile.dart';
@@ -17,11 +19,11 @@ class AppInfoModal extends StatelessWidget {
         crossAxisAlignment: .center,
         children: [
           AppLogo(size: 50),
-          Text(AppConstant.appName, style: theme.textTheme.titleLarge,),
-          InfoListile(title: 'Version', value: AppConstant.appVersion),
-          InfoListile(title: 'Build Date', value: AppConstant.buildDate),
-          InfoListile(title: 'Developer', value: AppConstant.developer),
-          InfoListile(title: 'Support', value: AppConstant.supportEmail),
+          Text( context.tr(AppText.simple_recoder), style: theme.textTheme.titleLarge,),
+          InfoListile(title: context.tr(AppText.version), value: AppConstant.appVersion),
+          InfoListile(title:  context.tr(AppText.build_date), value: AppConstant.buildDate),
+          InfoListile(title:  context.tr(AppText.developer), value: AppConstant.developer),
+          InfoListile(title:  context.tr(AppText.support), value: AppConstant.supportEmail),
         ],
       ),
     );

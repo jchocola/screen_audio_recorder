@@ -1,0 +1,20 @@
+{
+  "about": "About",
+  "audio_recording": "Audio Recording",
+  "build_date": "Build Date",
+  "developer": "Developer",
+  "language": "Language",
+  "legal_info": "Legal Info",
+  "mono": "Audio Channel - Mono",
+  "record_audio": "Record Audio",
+  "record_screen": "Record Screen",
+  "screen_recording": "Screen Recording",
+  "simple_recoder": "Simple Recorder",
+  "start_recording": "Start Recording",
+  "stereo": "Audio Channel - Stereo",
+  "stop_recording": "Stop Recording",
+  "support": "Support",
+  "version": "Version",
+  "with_audio": "With Audio",
+  "without_audio": "Without Audio"
+}

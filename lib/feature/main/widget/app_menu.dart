@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:recorder_app/core/app_text/app_text.dart';
 import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/core/icon/app_icon.dart';
 import 'package:recorder_app/feature/main/modal/app_info_modal.dart';
+import 'package:recorder_app/feature/main/modal/language_modal.dart';
 import 'package:recorder_app/feature/recorder/bloc/recorder_bloc.dart';
 import 'package:recorder_app/main.dart';
 import 'package:recorder_app/shared/app_logo.dart';
@@ -23,6 +26,14 @@ class AppMenu extends StatelessWidget {
       );
     }
 
+     void onLanguageTapped() {
+      showModalBottomSheet(
+        context: context,
+        showDragHandle: true,
+        builder: (context) => LanguageModal(),
+      );
+    }
+
     Future<void> onLegalInfoTapped() async {
       if (!await launchUrl(Uri.parse(AppConstant.pravicyPolicyUrl))) {
         logger.e('Failed to launch ');
@@ -37,17 +48,17 @@ class AppMenu extends StatelessWidget {
           builder: (context, state) {
             if (state is RecorderBlocState_recordingAudio) {
               return Text(
-                'Audio Recording',
+                context.tr(AppText.audio_recording),
                 style: theme.textTheme.titleMedium,
               );
             } else if (state is RecorderBlocState_recordingScreen) {
               return Text(
-                'Screen Recording',
+                context.tr(AppText.screen_recording),
                 style: theme.textTheme.titleMedium,
               );
             } else {
               return Text(
-                'Simple Recorder',
+                context.tr(AppText.simple_recoder),
                 style: theme.textTheme.titleMedium,
               );
             }
@@ -59,17 +70,24 @@ class AppMenu extends StatelessWidget {
           itemBuilder: (context) {
             return [
               PopupMenuItem(
+                 onTap: onLanguageTapped,
                 child: Row(
                   spacing: AppConstant.appPadding,
-                  children: [Icon(AppIcon.languageIcon), Text('Language')],
+                  children: [
+                    Icon(AppIcon.languageIcon),
+                    Text(context.tr(AppText.language)),
+                  ],
                 ),
               ),
 
               PopupMenuItem(
-                 onTap: onLegalInfoTapped,
+                onTap: onLegalInfoTapped,
                 child: Row(
                   spacing: AppConstant.appPadding,
-                  children: [Icon(AppIcon.legalInfoIcon), Text('Legal Info')],
+                  children: [
+                    Icon(AppIcon.legalInfoIcon),
+                    Text(context.tr(AppText.legal_info)),
+                  ],
                 ),
               ),
 
@@ -77,7 +95,10 @@ class AppMenu extends StatelessWidget {
                 onTap: onAboutAppTapped,
                 child: Row(
                   spacing: AppConstant.appPadding,
-                  children: [Icon(AppIcon.infoIcon), Text('About')],
+                  children: [
+                    Icon(AppIcon.infoIcon),
+                    Text(context.tr(AppText.about)),
+                  ],
                 ),
               ),
             ];

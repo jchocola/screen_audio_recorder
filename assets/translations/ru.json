@@ -1,0 +1,20 @@
+{
+  "about": "О нас",
+  "audio_recording": "Идет аудио запись",
+  "build_date": "Дата сборки",
+  "developer": "Разработчик",
+  "language": "Язык",
+  "legal_info": "Правовое инфо",
+  "mono": "Аудио канал - Моно",
+  "record_audio": "Аудио запись",
+  "record_screen": "Запись экрана",
+  "screen_recording": "Идет запись экрана",
+  "simple_recoder": "Простой Рекордер",
+  "start_recording": "Начать записывать",
+  "stereo": "Аудио канал - Стерео",
+  "stop_recording": "Остановить",
+  "support": "Поддержка",
+  "version": "Версия",
+  "with_audio": "С звуком",
+  "without_audio": "Без звука"
+}

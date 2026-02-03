@@ -1,0 +1,20 @@
+{
+  "about": "Thông tin",
+  "audio_recording": "Đang thu âm ",
+  "build_date": "Ngày phát hành",
+  "developer": "Nhà phát triển ",
+  "language": "Ngôn ngữ ",
+  "legal_info": "Pháp lý",
+  "mono": "Kênh - Mono",
+  "record_audio": "Thu âm",
+  "record_screen": "Thu màn hình ",
+  "screen_recording": "Đang thu màn hình",
+  "simple_recoder": "Simple Recorder",
+  "start_recording": "Bắt đầu thu ",
+  "stereo": "Kênh - Stereo",
+  "stop_recording": "Dừng",
+  "support": "Hỗ trợ",
+  "version": "Phiên bản",
+  "with_audio": "Có tiếng",
+  "without_audio": "Không tiếng"
+}
