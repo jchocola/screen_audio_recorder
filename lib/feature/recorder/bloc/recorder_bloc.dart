@@ -151,6 +151,7 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
             ///
             //1) REQUEST MICROPHONE
             final status = await fftRecorderController.requestMicPermission();
+            
             if (status == true) {
               final dir = await getDownloadsDirectory();
               final filename = DateTime.now().toIso8601String() + '.wav';
