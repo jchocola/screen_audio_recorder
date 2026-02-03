@@ -8,6 +8,7 @@ import 'package:fft_recorder_ui/fft_recorder_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_recorder/flutter_recorder.dart';
 import 'package:path_provider/path_provider.dart';
+
 import 'package:recorder_app/main.dart';
 
 ///
@@ -81,6 +82,20 @@ class RecorderBlocState_recordingAudio extends RecorderBlocState {
 }
 
 class RecorderBlocState_recordingScreen extends RecorderBlocState {}
+
+class RecorderBlocState_success extends RecorderBlocState {
+  final String note;
+  RecorderBlocState_success({required this.note});
+  @override
+  List<Object?> get props => [note];
+}
+
+class RecorderBlocState_error extends RecorderBlocState {
+  final String error;
+  RecorderBlocState_error({required this.error});
+  @override
+  List<Object?> get props => [error];
+}
 
 ///
 /// BLOC
@@ -156,9 +171,7 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
           logger.d('Audio Channel : ${!isMono}');
 
           fftRecorderController = FftRecorderController(
-            channels: !isMono
-                ? RecorderChannels.mono
-                : RecorderChannels.stereo,
+            channels: !isMono ? RecorderChannels.mono : RecorderChannels.stereo,
           );
         } catch (e) {
           log(e.toString());
@@ -205,6 +218,8 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
               });
             } else {
               log('Microphone denied');
+              emit(RecorderBlocState_error(error: 'Microphone don\'t allowed !'));
+              emit(currentState);
             }
           }
         } catch (e) {
@@ -228,7 +243,9 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
           _timer?.cancel();
           _timer = null;
 
-          await fftRecorderController.stopRecording();
+          final saveDir = await fftRecorderController.stopRecording();
+
+          emit(RecorderBlocState_success(note: saveDir ?? ''));
 
           _elapsed = Duration.zero;
 

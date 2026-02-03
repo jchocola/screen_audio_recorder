@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/core/icon/app_icon.dart';
+import 'package:recorder_app/core/snack_bar/show_error_snackbar.dart';
+import 'package:recorder_app/core/snack_bar/show_success_snackbar.dart';
 import 'package:recorder_app/feature/menu/widget/app_menu.dart';
 import 'package:recorder_app/feature/recorder/bloc/recorder_bloc.dart';
 import 'package:recorder_app/feature/recorder/presentation/recording_bar.dart';
+import 'package:recorder_app/main.dart';
 import 'package:recorder_app/shared/big_button.dart';
 import 'package:recorder_app/shared/mode_card.dart';
 import 'package:recorder_app/shared/parameter_listile.dart';
@@ -27,7 +30,17 @@ class MenuPage extends StatelessWidget {
         children: [
           AppMenu(),
 
-          BlocBuilder<RecorderBloc, RecorderBlocState>(
+          BlocConsumer<RecorderBloc, RecorderBlocState>(
+            listener: (context, state) {
+              if (state is RecorderBlocState_success) {
+                showSuccessSnackbar(context, content: state.note);
+              }
+
+              if (state is RecorderBlocState_error) {
+                showErrorSnackbar(context, content: state.error);
+              }
+            },
+
             builder: (context, state) {
               if (state is RecorderBlocState_preparing) {
                 return Column(
@@ -99,13 +112,23 @@ class MenuPage extends StatelessWidget {
   }
 
   Widget _audioRecorderParams(BuildContext context) {
-       final recorderBloc_l = context.watch<RecorderBloc>().state;
-    return Column(children: [
-      ParameterListile(
-        title: recorderBloc_l is RecorderBlocState_preparing ? recorderBloc_l.recordChannelIsMono ? 'Audio Channel - Mono' :  'Audio Channel - Stereo' : '',
-        switchValue: recorderBloc_l is RecorderBlocState_preparing ? recorderBloc_l.recordChannelIsMono : false,
-        onSwitchChanged: (_) => context.read<RecorderBloc>().add(RecorderBlocEvent_toogleAudioChannelValue()),
-      )
-    ]);
+    final recorderBloc_l = context.watch<RecorderBloc>().state;
+    return Column(
+      children: [
+        ParameterListile(
+          title: recorderBloc_l is RecorderBlocState_preparing
+              ? recorderBloc_l.recordChannelIsMono
+                    ? 'Audio Channel - Mono'
+                    : 'Audio Channel - Stereo'
+              : '',
+          switchValue: recorderBloc_l is RecorderBlocState_preparing
+              ? recorderBloc_l.recordChannelIsMono
+              : false,
+          onSwitchChanged: (_) => context.read<RecorderBloc>().add(
+            RecorderBlocEvent_toogleAudioChannelValue(),
+          ),
+        ),
+      ],
+    );
   }
 }

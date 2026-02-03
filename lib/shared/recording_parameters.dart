@@ -8,14 +8,20 @@ class RecordingParameters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RecorderBloc,RecorderBlocState>(
-      builder:(context,state)=> Row(
+    final theme = Theme.of(context);
+    return BlocBuilder<RecorderBloc, RecorderBlocState>(
+      builder: (context, state) => Row(
         children: [
-          Text(state is RecorderBlocState_recordingAudio ? state.elapsed.toString() : ''),
+          Text(
+            state is RecorderBlocState_recordingAudio
+                ? state.elapsed.toString()
+                : '',
+          ),
           Spacer(),
-          Icon(AppIcon.recordIcon),
-          Icon(AppIcon.enableAudioIcon),
-          
+
+          state is RecorderBlocState_recordingAudio
+              ? Icon(AppIcon.enableAudioIcon, color: theme.colorScheme.primary,)
+              : Container(),
         ],
       ),
     );
