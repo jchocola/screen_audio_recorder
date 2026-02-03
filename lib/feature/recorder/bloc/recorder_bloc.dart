@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fft_recorder_ui/fft_recorder_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_recorder/flutter_recorder.dart';
+import 'package:flutter_screen_recording/flutter_screen_recording.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:recorder_app/main.dart';
@@ -191,10 +192,31 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
       final currentState = state;
       if (currentState is RecorderBlocState_preparing) {
         try {
+          final filename = DateTime.now().toIso8601String();
+
           if (currentState.isRecordScreen) {
             ///
             /// RECORD SCREEN
             ///
+            logger.f('Record screen');
+            bool started = false;
+
+            if (currentState.recordVideoWithAudio) {
+              // 1) RECORD SCREEN WITH AUDIO
+              started = await FlutterScreenRecording.startRecordScreenAndAudio(
+                filename,
+              );
+            } else {
+              //1.b ) RECORD SCREEN WITHOUT AUDIO
+              started = await FlutterScreenRecording.startRecordScreen(
+                filename,
+              );
+            }
+
+            if (started) {
+               emit(RecorderBlocState_recordingScreen());
+            }
+
           } else {
             ///
             /// RECORD AUDIO
@@ -218,7 +240,9 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
               });
             } else {
               log('Microphone denied');
-              emit(RecorderBlocState_error(error: 'Microphone don\'t allowed !'));
+              emit(
+                RecorderBlocState_error(error: 'Microphone don\'t allowed !'),
+              );
               emit(currentState);
             }
           }
@@ -258,6 +282,27 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
           );
         } catch (e) {
           log(e.toString());
+        }
+      }
+
+      ///
+      /// RECORD SCREEN LOGIC
+      ///
+      if (currentState is RecorderBlocState_recordingScreen) {
+        try {
+          final saveDir = await FlutterScreenRecording.stopRecordScreen;
+
+          emit(RecorderBlocState_success(note: saveDir));
+
+          emit(
+            RecorderBlocState_preparing(
+              isRecordScreen: false,
+              recordVideoWithAudio: true,
+              recordChannelIsMono: true,
+            ),
+          );
+        } catch (e) {
+          logger.e(e);
         }
       }
     });

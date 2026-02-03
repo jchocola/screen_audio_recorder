@@ -80,7 +80,7 @@ class MenuPage extends StatelessWidget {
                     ),
                   ],
                 );
-              } else if (state is RecorderBlocState_recordingAudio) {
+              } else if (state is RecorderBlocState_recordingAudio || state is RecorderBlocState_recordingScreen) {
                 return RecordingBar();
               } else {
                 return CircularProgressIndicator();
