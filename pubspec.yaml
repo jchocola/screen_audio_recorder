@@ -39,6 +39,7 @@ dependencies:
   equatable: ^2.0.8
   fft_recorder_ui: ^1.0.2
   path_provider: ^2.1.5
+  flutter_recorder: ^1.1.2
 
 dev_dependencies:
   flutter_test:

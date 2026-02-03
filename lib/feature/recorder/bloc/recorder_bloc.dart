@@ -6,7 +6,9 @@ import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:fft_recorder_ui/fft_recorder_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_recorder/flutter_recorder.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:recorder_app/main.dart';
 
 ///
 /// EVENT
@@ -21,6 +23,8 @@ class RecorderBlocEvent_pickRecordAudio extends RecorderBlocEvent {}
 class RecorderBlocEvent_pickRecordScreen extends RecorderBlocEvent {}
 
 class RecorderBlocEvent_toogleRecordVideoWithAudio extends RecorderBlocEvent {}
+
+class RecorderBlocEvent_toogleAudioChannelValue extends RecorderBlocEvent {}
 
 class RecorderBlocEvent_startRecordingTapped extends RecorderBlocEvent {}
 
@@ -39,23 +43,31 @@ abstract class RecorderBlocState extends Equatable {
 class RecorderBlocState_preparing extends RecorderBlocState {
   final bool isRecordScreen;
   final bool recordVideoWithAudio;
+  final bool recordChannelIsMono;
   RecorderBlocState_preparing({
     required this.isRecordScreen,
     required this.recordVideoWithAudio,
+    required this.recordChannelIsMono,
   });
 
   RecorderBlocState_preparing copyWith({
     bool? isRecordScreen,
     bool? recordVideoWithAudio,
+    bool? recordChannelIsMono,
   }) {
     return RecorderBlocState_preparing(
       isRecordScreen: isRecordScreen ?? this.isRecordScreen,
       recordVideoWithAudio: recordVideoWithAudio ?? this.recordVideoWithAudio,
+      recordChannelIsMono: recordChannelIsMono ?? this.recordChannelIsMono,
     );
   }
 
   @override
-  List<Object?> get props => [isRecordScreen, recordVideoWithAudio];
+  List<Object?> get props => [
+    isRecordScreen,
+    recordVideoWithAudio,
+    recordChannelIsMono,
+  ];
 }
 
 class RecorderBlocState_loading extends RecorderBlocState {}
@@ -74,7 +86,7 @@ class RecorderBlocState_recordingScreen extends RecorderBlocState {}
 /// BLOC
 ///
 class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
-  final FftRecorderController fftRecorderController = FftRecorderController();
+  FftRecorderController fftRecorderController = FftRecorderController();
   // private timer and elapsed tracker
   Timer? _timer;
   Duration _elapsed = Duration.zero;
@@ -83,6 +95,7 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
         RecorderBlocState_preparing(
           isRecordScreen: true,
           recordVideoWithAudio: true,
+          recordChannelIsMono: true,
         ),
       ) {
     ///
@@ -129,6 +142,30 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
       }
     });
 
+    ///
+    /// TOOGLE RECORD CHANNEL
+    ///
+    on<RecorderBlocEvent_toogleAudioChannelValue>((event, emit) {
+      final currentState = state;
+      if (currentState is RecorderBlocState_preparing) {
+        try {
+          final isMono = currentState.recordChannelIsMono;
+
+          emit(currentState.copyWith(recordChannelIsMono: !isMono));
+
+          logger.d('Audio Channel : ${!isMono}');
+
+          fftRecorderController = FftRecorderController(
+            channels: !isMono
+                ? RecorderChannels.mono
+                : RecorderChannels.stereo,
+          );
+        } catch (e) {
+          log(e.toString());
+        }
+      }
+    });
+
     on<RecorderBlocEvent_tick>((event, emit) {
       _elapsed = _elapsed + const Duration(seconds: 1);
       emit(RecorderBlocState_recordingAudio(elapsed: _elapsed));
@@ -151,7 +188,7 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
             ///
             //1) REQUEST MICROPHONE
             final status = await fftRecorderController.requestMicPermission();
-            
+
             if (status == true) {
               final dir = await getDownloadsDirectory();
               final filename = DateTime.now().toIso8601String() + '.wav';
@@ -199,6 +236,7 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
             RecorderBlocState_preparing(
               isRecordScreen: false,
               recordVideoWithAudio: true,
+              recordChannelIsMono: true,
             ),
           );
         } catch (e) {

@@ -99,6 +99,13 @@ class MenuPage extends StatelessWidget {
   }
 
   Widget _audioRecorderParams(BuildContext context) {
-    return Column(children: []);
+       final recorderBloc_l = context.watch<RecorderBloc>().state;
+    return Column(children: [
+      ParameterListile(
+        title: recorderBloc_l is RecorderBlocState_preparing ? recorderBloc_l.recordChannelIsMono ? 'Audio Channel - Mono' :  'Audio Channel - Stereo' : '',
+        switchValue: recorderBloc_l is RecorderBlocState_preparing ? recorderBloc_l.recordChannelIsMono : false,
+        onSwitchChanged: (_) => context.read<RecorderBloc>().add(RecorderBlocEvent_toogleAudioChannelValue()),
+      )
+    ]);
   }
 }

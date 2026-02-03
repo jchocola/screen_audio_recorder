@@ -135,7 +135,7 @@ packages:
     source: hosted
     version: "6.0.0"
   flutter_recorder:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_recorder
       sha256: bccb7b0b0727f094d575b8d6f7a349a17c61252d25f3528f2b53b51380c2c096
