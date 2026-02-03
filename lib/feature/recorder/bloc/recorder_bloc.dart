@@ -82,7 +82,14 @@ class RecorderBlocState_recordingAudio extends RecorderBlocState {
   List<Object?> get props => [elapsed];
 }
 
-class RecorderBlocState_recordingScreen extends RecorderBlocState {}
+class RecorderBlocState_recordingScreen extends RecorderBlocState {
+  final bool withAudio;
+  RecorderBlocState_recordingScreen({
+    required this.withAudio,
+  });
+  @override
+  List<Object?> get props => [withAudio];
+}
 
 class RecorderBlocState_success extends RecorderBlocState {
   final String note;
@@ -214,9 +221,8 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
             }
 
             if (started) {
-               emit(RecorderBlocState_recordingScreen());
+              emit(RecorderBlocState_recordingScreen(withAudio: currentState.recordVideoWithAudio));
             }
-
           } else {
             ///
             /// RECORD AUDIO

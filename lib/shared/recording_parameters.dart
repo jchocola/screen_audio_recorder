@@ -20,7 +20,23 @@ class RecordingParameters extends StatelessWidget {
           Spacer(),
 
           state is RecorderBlocState_recordingAudio
-              ? Icon(AppIcon.enableAudioIcon, color: theme.colorScheme.primary,)
+              ? Icon(AppIcon.enableAudioIcon, color: theme.colorScheme.primary)
+              : Container(),
+
+          state is RecorderBlocState_recordingScreen
+              ? Icon(AppIcon.recordIcon, color: theme.colorScheme.primary)
+              : Container(),
+
+          state is RecorderBlocState_recordingScreen
+              ? state.withAudio
+                    ? Icon(
+                        AppIcon.enableAudioIcon,
+                        color: theme.colorScheme.primary,
+                      )
+                    : Icon(
+                        AppIcon.unableAudioIcon,
+                        color: theme.colorScheme.secondary,
+                      )
               : Container(),
         ],
       ),

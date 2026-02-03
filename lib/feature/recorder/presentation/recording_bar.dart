@@ -19,9 +19,9 @@ class RecordingBar extends StatelessWidget {
             spacing: AppConstant.appPadding,
             children: [
               RecordingParameters(),
-              AudioWave(),
+              state is RecorderBlocState_recordingAudio ?  AudioWave() : Container(),
               BigButton(title: 'Stop Recording', onTap: ()=> context.read<RecorderBloc>().add(RecorderBlocEvent_stopRecordingTapped()),),
-              BigButton(isNegative: true, title: 'Hold to delete record'),
+             // BigButton(isNegative: true, title: 'Hold to delete record'),
             ],
           );
         } else {
