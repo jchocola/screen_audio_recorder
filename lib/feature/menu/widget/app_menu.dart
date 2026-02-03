@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recorder_app/core/constant/app_constant.dart';
 import 'package:recorder_app/core/icon/app_icon.dart';
+import 'package:recorder_app/feature/recorder/bloc/recorder_bloc.dart';
 import 'package:recorder_app/shared/app_logo.dart';
 
 class AppMenu extends StatelessWidget {
@@ -13,7 +15,26 @@ class AppMenu extends StatelessWidget {
       spacing: AppConstant.appPadding,
       children: [
         AppLogo(),
-        Text('Simple Recorder', style: theme.textTheme.titleMedium),
+        BlocBuilder<RecorderBloc, RecorderBlocState>(
+          builder: (context, state) {
+            if (state is RecorderBlocState_recordingAudio) {
+              return Text(
+                'Audio Recording',
+                style: theme.textTheme.titleMedium,
+              );
+            } else if (state is RecorderBlocState_recordingScreen) {
+               return Text(
+                'Screen Recording',
+                style: theme.textTheme.titleMedium,
+              );
+            } else {
+              return Text(
+                'Simple Recorder',
+                style: theme.textTheme.titleMedium,
+              );
+            }
+          },
+        ),
         Spacer(),
 
         PopupMenuButton(

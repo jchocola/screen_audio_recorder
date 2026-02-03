@@ -5,6 +5,7 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:fft_recorder_ui/fft_recorder_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_recorder/flutter_recorder.dart';
 import 'package:flutter_screen_recording/flutter_screen_recording.dart';
@@ -84,11 +85,23 @@ class RecorderBlocState_recordingAudio extends RecorderBlocState {
 
 class RecorderBlocState_recordingScreen extends RecorderBlocState {
   final bool withAudio;
+  final Duration elapsed;
   RecorderBlocState_recordingScreen({
     required this.withAudio,
+    required this.elapsed,
   });
   @override
-  List<Object?> get props => [withAudio];
+  List<Object?> get props => [withAudio, elapsed];
+
+  RecorderBlocState_recordingScreen copyWith({
+    bool? withAudio,
+    Duration? elapsed,
+  }) {
+    return RecorderBlocState_recordingScreen(
+      withAudio: withAudio ?? this.withAudio,
+      elapsed: elapsed ?? this.elapsed,
+    );
+  }
 }
 
 class RecorderBlocState_success extends RecorderBlocState {
@@ -188,8 +201,16 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
     });
 
     on<RecorderBlocEvent_tick>((event, emit) {
+      state;
+
       _elapsed = _elapsed + const Duration(seconds: 1);
-      emit(RecorderBlocState_recordingAudio(elapsed: _elapsed));
+
+      if (state is RecorderBlocState_recordingAudio) {
+        emit(RecorderBlocState_recordingAudio(elapsed: _elapsed));
+      } else if (state is RecorderBlocState_recordingScreen) {
+        final currentState = state as RecorderBlocState_recordingScreen;
+        emit(currentState.copyWith(elapsed: _elapsed));
+      }
     });
 
     ///
@@ -221,7 +242,17 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
             }
 
             if (started) {
-              emit(RecorderBlocState_recordingScreen(withAudio: currentState.recordVideoWithAudio));
+              _elapsed = Duration.zero;
+              emit(
+                RecorderBlocState_recordingScreen(
+                  withAudio: currentState.recordVideoWithAudio,
+                  elapsed: _elapsed,
+                ),
+              );
+
+              _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+                add(RecorderBlocEvent_tick());
+              });
             }
           } else {
             ///
@@ -296,6 +327,10 @@ class RecorderBloc extends Bloc<RecorderBlocEvent, RecorderBlocState> {
       ///
       if (currentState is RecorderBlocState_recordingScreen) {
         try {
+             // stop timer first
+          _timer?.cancel();
+          _timer = null;
+
           final saveDir = await FlutterScreenRecording.stopRecordScreen;
 
           emit(RecorderBlocState_success(note: saveDir));

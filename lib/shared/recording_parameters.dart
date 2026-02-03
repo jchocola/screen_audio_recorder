@@ -13,7 +13,12 @@ class RecordingParameters extends StatelessWidget {
       builder: (context, state) => Row(
         children: [
           Text(
-            state is RecorderBlocState_recordingAudio
+            state is RecorderBlocState_recordingAudio 
+                ? state.elapsed.toString()
+                : '',
+          ),
+            Text(
+            state is RecorderBlocState_recordingScreen
                 ? state.elapsed.toString()
                 : '',
           ),
